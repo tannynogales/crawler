@@ -18,17 +18,17 @@ cp .env.example .env
 
 Variables requeridas:
 
-| Variable | Descripción |
-| --- | --- |
-| `GOOGLE_APPLICATION_CREDENTIALS` | Ruta al JSON del servicio |
-| `GOOGLE_SHEET_ID` | ID de la hoja (cadena entre `/d/` y `/edit`) |
+| Variable                         | Descripción                                                                     |
+| -------------------------------- | ------------------------------------------------------------------------------- |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Ruta al JSON de la credencial (clave) de la cuenta del servicio de Google Cloud |
+| `GOOGLE_SHEET_ID`                | ID de la hoja (cadena entre `/d/` y `/edit`)                                    |
 
 Variables opcionales:
 
-| Variable | Descripción |
-| --- | --- |
+| Variable            | Descripción                                             |
+| ------------------- | ------------------------------------------------------- |
 | `SECTION_WHITELIST` | Lista separada por comas para filtrar secciones válidas |
-| `PROXY_URLS` | Lista separada por comas para proxies (solo Puppeteer) |
+| `PROXY_URLS`        | Lista separada por comas para proxies (solo Puppeteer)  |
 
 ## CheerioCrawler (`crawler.ts`)
 
@@ -37,7 +37,6 @@ NODE_OPTIONS="--max-old-space-size=4096" npx ts-node crawler.ts https://www.bci.
 ```
 
 - Rastrea por HTTP plano, más rápido.
-- `SECTION_WHITELIST=personas,empresas` (opcional) para limitar secciones válidas.
 - Resultado: exportación directa a Google Sheets.
 
 ## PuppeteerCrawler (`puppeteer-crawlerts.ts`)
