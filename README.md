@@ -1,4 +1,4 @@
-# Crawler BCI/Serfinanza
+# Crawler de Sitios Públicos
 
 Dos implementaciones paralelas (`crawler.ts` con Cheerio y `puppeteer-crawlerts.ts` con Puppeteer) que recorren sitios bancarios, extraen metadatos y exportan los resultados a Google Sheets.
 
