@@ -9,16 +9,31 @@ Dos implementaciones paralelas (`crawler.ts` con Cheerio y `puppeteer-crawlerts.
 - Credenciales de Google Service Account con acceso a Sheets (`fast-nexus-367308-e4313f153b4c.json` en la raíz o configura `GOOGLE_APPLICATION_CREDENTIALS`).
 - Hoja de cálculo compartida con `crawler@fast-nexus-367308.iam.gserviceaccount.com`
 
+1. `npm install`
+2. Copia `.env.example` a `.env` y actualiza los valores:
+
 ```bash
-npm install
-export GOOGLE_APPLICATION_CREDENTIALS="$PWD/fast-nexus-367308-e4313f153b4c.json"
-export GOOGLE_SHEET_ID="13iSFxvbdbS6LPN8gTdRRv9Li24hpbdbcYyE7AyTvGxs" # opcional
+cp .env.example .env
 ```
+
+Variables requeridas:
+
+| Variable | Descripción |
+| --- | --- |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Ruta al JSON del servicio |
+| `GOOGLE_SHEET_ID` | ID de la hoja (cadena entre `/d/` y `/edit`) |
+
+Variables opcionales:
+
+| Variable | Descripción |
+| --- | --- |
+| `SECTION_WHITELIST` | Lista separada por comas para filtrar secciones válidas |
+| `PROXY_URLS` | Lista separada por comas para proxies (solo Puppeteer) |
 
 ## CheerioCrawler (`crawler.ts`)
 
 ```
-npx ts-node crawler.ts https://www.bci.cl 2
+NODE_OPTIONS="--max-old-space-size=4096" npx ts-node crawler.ts https://www.bci.cl 2
 ```
 
 - Rastrea por HTTP plano, más rápido.
@@ -30,13 +45,13 @@ npx ts-node crawler.ts https://www.bci.cl 2
 Usa Chromium real para superar bloqueos JavaScript.
 
 ```
-npx ts-node puppeteer-crawlerts.ts https://bancoserfinanza.com 2
+NODE_OPTIONS="--max-old-space-size=4096" npx ts-node puppeteer-crawlerts.ts https://bancoserfinanza.com 2
 ```
 
 Variables útiles:
 
-- `PROXY_URLS="http://user:pass@host1:3128,..."` para rotar IPs.
-- `NODE_OPTIONS="--max-old-space-size=4096"` si el sitio es grande.
+- Define `PROXY_URLS="http://user:pass@host1:3128,..."` en tu `.env` para rotar IPs.
+- Anteponer `NODE_OPTIONS="--max-old-space-size=4096"` (como en los ejemplos) aumenta la memoria disponible.
 
 Características:
 

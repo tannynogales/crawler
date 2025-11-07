@@ -1,6 +1,6 @@
 // crawler.ts
 import { CheerioCrawler, RequestQueue, type RequestTransform } from "crawlee";
-import { promises as fs } from "node:fs";
+import { promises as fs, readFileSync } from "node:fs";
 import path from "node:path";
 import { google } from "googleapis";
 
@@ -14,11 +14,13 @@ interface CrawlResult {
   template: string;
 }
 
-const DEFAULT_CREDENTIALS_PATH = path.resolve(
-  "./fast-nexus-367308-e4313f153b4c.json"
+loadEnvFromFile();
+assertRequiredEnv(["GOOGLE_APPLICATION_CREDENTIALS", "GOOGLE_SHEET_ID"]);
+
+const credentialsPath = path.resolve(
+  process.env.GOOGLE_APPLICATION_CREDENTIALS as string
 );
-const DEFAULT_GOOGLE_SHEET_ID = "13iSFxvbdbS6LPN8gTdRRv9Li24hpbdbcYyE7AyTvGxs";
-const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID ?? DEFAULT_GOOGLE_SHEET_ID;
+const GOOGLE_SHEET_ID = process.env.GOOGLE_SHEET_ID as string;
 const SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
 
 const crawlResults: CrawlResult[] = [];
@@ -34,6 +36,39 @@ async function ensureCredentialsFileExists(credentialsPath: string) {
     throw new Error(
       `No se encontró el archivo de credenciales en ${credentialsPath}. ` +
         "Asegúrate de que GOOGLE_APPLICATION_CREDENTIALS apunte al archivo correcto."
+    );
+  }
+}
+
+function loadEnvFromFile(fileName = ".env") {
+  try {
+    const filePath = path.resolve(fileName);
+    const content = readFileSync(filePath, "utf8");
+    for (const line of content.split(/\r?\n/)) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const [key, ...rest] = trimmed.split("=");
+      if (!key) continue;
+      const value = rest.join("=").trim();
+      if (!value) continue;
+      if (!(key in process.env)) {
+        process.env[key] = value.replace(/^['"]|['"]$/g, "");
+      }
+    }
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
+      console.warn("No se pudo leer el archivo .env:", err);
+    }
+  }
+}
+
+function assertRequiredEnv(keys: string[]) {
+  const missing = keys.filter((key) => !process.env[key]);
+  if (missing.length > 0) {
+    throw new Error(
+      `Faltan variables de entorno requeridas: ${missing.join(
+        ", "
+      )}. Configúralas en tu entorno o en el archivo .env.`
     );
   }
 }
@@ -90,13 +125,10 @@ function finalizeSections(results: CrawlResult[]) {
 }
 
 async function createSheetsService() {
-  const keyFile =
-    process.env.GOOGLE_APPLICATION_CREDENTIALS ?? DEFAULT_CREDENTIALS_PATH;
-
-  await ensureCredentialsFileExists(keyFile);
+  await ensureCredentialsFileExists(credentialsPath);
 
   const auth = new google.auth.GoogleAuth({
-    keyFile,
+    keyFile: credentialsPath,
     scopes: [SHEETS_SCOPE],
   });
 
