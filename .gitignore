@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build / temp artifacts
+dist/
+out/
+*.log
+
+# TypeScript metadata
+*.tsbuildinfo
+
+# Local credentials / secrets
+*.json
+!package*.json
+
+# Crawlee storage (request queues, key-value stores)
+storage/
+
+# OS files
+.DS_Store
