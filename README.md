@@ -9,6 +9,18 @@ Dos implementaciones paralelas (`crawler.ts` con Cheerio y `puppeteer-crawlerts.
 - Credenciales de Google Service Account con acceso a Sheets (`fast-nexus-367308-e4313f153b4c.json` en la raíz o configura `GOOGLE_APPLICATION_CREDENTIALS`).
 - Hoja de cálculo compartida con `crawler@fast-nexus-367308.iam.gserviceaccount.com`
 
+### Dar acceso a la Google Sheet
+
+Tanto `crawler.ts` como `puppeteer-crawlerts.ts` escriben directamente en la misma hoja de cálculo, así que comparte la planilla de Google Sheets con la cuenta de servicio de Google Cloud y asegúrate de otorgarle permisos de edición:
+
+1. Abre la Google Sheet que usarán los scripts.
+2. Haz clic en **Compartir** (esquina superior derecha).
+3. En **Personas y grupos**, agrega el correo del la cuenta (ejemplo: `crawler@fast-nexus-367308.iam.gserviceaccount.com`).
+4. Asigna el rol **Editor** para permitir lectura y escritura.
+5. Confirma con **Compartir**.
+
+Sin ese permiso la API de Sheets responderá con errores 403 al intentar insertar filas.
+
 1. `npm install`
 2. Copia `.env.example` a `.env` y actualiza los valores:
 
